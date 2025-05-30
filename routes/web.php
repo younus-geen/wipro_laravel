@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactUSController;
 use App\Models\ContactUs;
+use App\Http\Controllers\ProductController;
+use App\Models\Products;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,7 +18,8 @@ use App\Models\ContactUs;
 Route::get('/contact', [ContactUSController::class, 'index'])->name('contact.index');   
 Route::post('/contact', [ContactUSController::class, 'store'])->name('contact.store');
 
-
+Route::get('/add_product', [ProductController::class, 'index'])->name('product.index');   
+Route::post('/add_product', [ProductController::class, 'store'])->name('product.store');
 
 Route::get('/', function () {
     return view('welcome');

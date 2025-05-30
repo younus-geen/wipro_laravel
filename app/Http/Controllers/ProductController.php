@@ -8,6 +8,7 @@ class ProductController extends Controller
 {
     public function index()
     {
+        dd("bahavan is here");
         return view('products');
     }
     public function store(Request $request)
@@ -16,23 +17,38 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category' => 'required|string|max:255',
             'color' => 'nullable|string|max:50',
             'size' => 'nullable|string|max:50',
         ]);
-
+       $imageName = null;
+    if ($request->hasFile('image')) {
+        $imageName = time().'.'.$request->image->extension();
+        $request->image->move(public_path('uploads'), $imageName);
+    }
+  
         // Assuming you have a Product model set up
-            Products::create([
+        $products =    Products::create([
             'name' => $request->input('name'),
             'description' => $request->input('description'),
             'price' => $request->input('price'),
-            'image' => $request->file('image')->store('images', 'public'), // Store image in public/images
+            'image' => $imageName,
             'category' => $request->input('category'),
             'color' => $request->input('color'),
             'size' => $request->input('size'),
         ]);
-
+        if ($products) {
+            $request->session()->flash('success', 'Product added successfully!');
+        } else {
+            $request->session()->flash('error', 'Failed to add product.');
+        }
+//   dd("$request", $request->all(), $imageName);
         return redirect()->back()->with('success', 'Product added successfully!');
+    }
+    public function display()
+    {
+        $products = Products::all();
+        return view('home', compact('products'));
     }
 }
